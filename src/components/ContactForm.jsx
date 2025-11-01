@@ -9,6 +9,8 @@ const ContactForm = () => {
   const [profile, setProfile] = useState('');
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [isNameError, setIsNameError] = useState(false);
+  const [isPhoneNumberError, setIsPhoneNumberError] = useState(false);
 
   const { addContact } = useContacts();
 
@@ -24,6 +26,30 @@ const ContactForm = () => {
     }
   };
 
+  const handleChangeName = (e) => {
+    const regex = /[^a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣]/g;
+
+    if (regex.test(e.target.value)) {
+      setIsNameError(true);
+    } else {
+      setIsNameError(false);
+    }
+
+    setName(e.target.value);
+  };
+
+  const handleChangePhoneNumber = (e) => {
+    const regex = /[^0-9-]/;
+
+    if (regex.test(e.target.value)) {
+      setIsPhoneNumberError(true);
+    } else {
+      setIsPhoneNumberError(false);
+    }
+
+    setPhoneNumber(e.target.value);
+  };
+
   const handleAddContact = (e) => {
     e.preventDefault();
 
@@ -31,6 +57,11 @@ const ContactForm = () => {
 
     if (!name.trim() || !phoneNumber.trim()) {
       alert('이름 또는 전화번호를 입력하세요. ');
+      return;
+    }
+
+    if (isNameError || isPhoneNumberError) {
+      alert('이름 또는 전화번호 형식이 올바르지 않습니다.');
       return;
     }
 
@@ -67,22 +98,38 @@ const ContactForm = () => {
         </Button>
       </Box>
       <Box display={'flex'} flexDirection={'column'} gap={1}>
-        <TextField
-          id='outlined-basic'
-          label='이름'
-          variant='outlined'
-          fullWidth
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <TextField
-          id='outlined-basic'
-          label='전화번호'
-          variant='outlined'
-          fullWidth
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
-        />
+        <Box>
+          <TextField
+            id='outlined-basic'
+            label='이름'
+            variant='outlined'
+            color={isNameError ? 'error' : ''}
+            fullWidth
+            value={name}
+            onChange={handleChangeName}
+          />
+          {isNameError && (
+            <p style={{ fontSize: '12px', marginTop: '8px', color: '#E15241' }}>
+              한글과 영어 외의 문자는 입력할 수 없습니다.
+            </p>
+          )}
+        </Box>
+        <Box>
+          <TextField
+            id='outlined-basic'
+            label='전화번호'
+            variant='outlined'
+            color={isPhoneNumberError ? 'error' : ''}
+            fullWidth
+            value={phoneNumber}
+            onChange={handleChangePhoneNumber}
+          />
+          {isPhoneNumberError && (
+            <p style={{ fontSize: '12px', marginTop: '8px', color: '#E15241' }}>
+              숫자와 하이픈(-) 외의 문자는 입력할 수 없습니다.
+            </p>
+          )}
+        </Box>
       </Box>
       <Button variant='contained' type='submit'>
         <AddIcCall style={{ marginRight: '6px' }} />

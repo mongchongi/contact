@@ -13,7 +13,9 @@ const ContactList = () => {
     const newKeyword = e.target.value;
     setKeyword(newKeyword);
 
-    const searchedContacts = contacts.filter((contact) => contact.name.includes(newKeyword));
+    const searchedContacts = contacts.filter(
+      (contact) => contact.name.includes(newKeyword) || contact.phoneNumber.includes(newKeyword)
+    );
     setCurrentContacts(searchedContacts);
   };
 
